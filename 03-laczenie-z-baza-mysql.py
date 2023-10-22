@@ -20,7 +20,7 @@ if existing_user is None:
     connection.commit()
     print("Użytkownik dodany pomyślnie.")
 else:
-    print("Podany użytkownik już istnieje.")
+    print("Podany użytkownik istnieje.")
 
 query = 'SELECT id, username, city FROM users'
 cursor.execute(query)
