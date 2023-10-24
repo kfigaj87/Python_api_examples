@@ -1,15 +1,15 @@
 import mysql.connector
 
 connection = mysql.connector.connect(
-    user='', password='', host='', database='python', auth_plugin='mysql_native_password')
+    user='', password='', host='127.0.0.1', database='python1', auth_plugin='mysql_native_password')
 
 cursor = connection.cursor()
 
 
 checkQuery = "SELECT * FROM users WHERE username = %(username)s AND city = %(city)s"
 insertData = {
-    'username': 'Karol',
-    'city': 'Warszawa'
+    'username': 'Janko',
+    'city': 'Krakow'
 }
 cursor.execute(checkQuery, insertData)
 existing_user = cursor.fetchone()
