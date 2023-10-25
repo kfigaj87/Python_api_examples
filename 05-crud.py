@@ -2,6 +2,7 @@ import mysql.connector
 from flask import Flask
 from flask import jsonify
 from flask import request
+from flask import Response
 import jsonpickle
 
 
@@ -35,7 +36,11 @@ def get_users():
 
     connection.close()
 
-    return jsonpickle.encode(users, unpicklable=False)
+    response = Response(jsonpickle.encode(
+        users, unpicklable=False), mimetype='application/json')
+    response.headers['Title'] = 'CRUD_app'
+
+    return response
 
 
 @app.route('/users', methods=['POST'])
@@ -75,6 +80,27 @@ def edit_user(user_id):
         connection.close()
 
     return request_data
+
+
+@app.route('/users/<user_id>', methods=["DELETE"])
+def delete_user(user_id):
+    request_data = {}
+    request_data['user_id'] = user_id
+    try:
+        connection = get_connection_to_database()
+        cursor = connection.cursor()
+
+        query = 'DELETE from users WHERE id=%(user_id)s'
+        cursor.execute(query, request_data)
+        connection.commit()
+
+        return jsonify(message="User deleted")
+    except mysql.connector.Error as err:
+        return jsonify(details=err.msg), 400
+    finally:
+        connection.close()
+
+    return jsonify()
 
 
 app.run()
