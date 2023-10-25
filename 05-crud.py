@@ -57,4 +57,24 @@ def add_user():
     return request_data, 201
 
 
+@app.route('/users/<user_id>', methods=['PUT'])
+def edit_user(user_id):
+    request_data = request.get_json()
+    request_data['user_id'] = user_id
+
+    try:
+        connection = get_connection_to_database()
+        cursor = connection.cursor()
+
+        query = 'UPDATE users SET username=%(username)s, city=%(city)s WHERE id=%(user_id)s'
+        cursor.execute(query, request_data)
+        connection.commit()
+    except mysql.connector.Error as err:
+        return jsonify(details=err.msg), 400
+    finally:
+        connection.close()
+
+    return request_data
+
+
 app.run()

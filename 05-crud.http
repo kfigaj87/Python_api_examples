@@ -9,3 +9,12 @@ Content-Type: application/json
     "username": "Julia",
     "city": "Lodz"
 }
+###
+
+PUT http://localhost:5000/users/1
+Content-Type: application/json
+
+{
+    "username": "Karol",
+    "city": "Poznan"
+}
