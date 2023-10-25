@@ -41,14 +41,18 @@ def get_users():
 @app.route('/users', methods=['POST'])
 def add_user():
     request_data = request.get_json()
-    connection = get_connection_to_database()
-    cursor = connection.cursor()
 
-    query = 'INSERT INTO users(username, city) VALUES(%(username)s, %(city)s)'
-    cursor.execute(query, request_data)
-    connection.commit()
+    try:
+        connection = get_connection_to_database()
+        cursor = connection.cursor()
 
-    connection.close()
+        query = 'INSERT INTO users(username, city) VALUES(%(username)s, %(city)s)'
+        cursor.execute(query, request_data)
+        connection.commit()
+    except mysql.connector.Error as err:
+        return jsonify(details=err.msg), 400
+    finally:
+        connection.close()
 
     return request_data, 201
 
