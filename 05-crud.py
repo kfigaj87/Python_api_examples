@@ -76,6 +76,10 @@ def delete_user(user_id):
         cursor = connection.cursor()
         query = 'DELETE from users WHERE id=%(user_id)s'
         cursor.execute(query, request_data)
+
+        if cursor.rowcount == 0:
+            return jsonify(message="User not found"), 404
+
         connection.commit()
         return jsonify(message="User deleted")
     except mysql.connector.Error as err:
