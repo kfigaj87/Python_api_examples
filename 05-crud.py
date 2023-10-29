@@ -5,8 +5,11 @@ from config import DATABASE_CONFIG
 
 
 def get_connection_to_database():
-    connection = mysql.connector.connect(**DATABASE_CONFIG)
-    return connection
+    try:
+        connection = mysql.connector.connect(**DATABASE_CONFIG)
+        return connection
+    except mysql.connector.Error as err:
+        return jsonify(details="Error connecting to the database: " + str(err)), 500
 
 
 class User:
@@ -59,6 +62,9 @@ def edit_user(user_id):
         cursor = connection.cursor()
         query = 'UPDATE users SET username=%(username)s, city=%(city)s WHERE id=%(user_id)s'
         cursor.execute(query, request_data)
+        if cursor.rowcount == 0:
+            return jsonify(details="User with the provided ID not found."), 404
+
         connection.commit()
     except mysql.connector.Error as err:
         return jsonify(details=err.msg), 400
